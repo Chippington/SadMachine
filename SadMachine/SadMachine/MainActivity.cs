@@ -26,7 +26,7 @@ namespace SadMachine
 			Console.WriteLine($"Connected! User: {client.CurrentUser.Name}");
 
 			CommandManager.addCommandHook("test", (cmd) => {
-				Console.WriteLine("{0}: Test: {1}", cmd.client.Name, string.Join(",", cmd.args));
+				Console.WriteLine("{0}: Test: {1}", cmd.messageInfo.User.Name, string.Join(",", cmd.args));
 			});
 		}
 
@@ -43,7 +43,7 @@ namespace SadMachine
 					for (int i = 1; i < split.Length; i++)
 						args[i - 1] = split[i];
 
-					CommandManager.invokeCommand(e.User, split[0], args);
+					CommandManager.invokeCommand(e, split[0], args);
 				} catch(Exception ex) {
 					Console.WriteLine(ex.Message);
 					Console.WriteLine(ex.StackTrace);

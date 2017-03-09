@@ -10,7 +10,7 @@ using Discord;
 
 namespace SadMachine.Commands {
 	public class Command {
-		public User client;
+		public MessageEventArgs messageInfo;
 		public string[] args;
 	}
 }

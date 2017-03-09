@@ -23,10 +23,10 @@ namespace SadMachine.Commands {
 				callbackMap[command].Remove(callback);
 		}
 
-		public static void invokeCommand(User sender, string cmdName, string[] args) {
+		public static void invokeCommand(MessageEventArgs mInfo, string cmdName, string[] args) {
 			if(callbackMap.ContainsKey(cmdName)) {
 				Command cmd = new Command();
-				cmd.client = sender;
+				cmd.messageInfo = mInfo;
 				cmd.args = args;
 
 				foreach (Action<Command> a in callbackMap[cmdName])
