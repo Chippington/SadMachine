@@ -9,30 +9,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using SadMachine.Activities;
+using SadMachine.Commands;
+
 namespace SadMachine
 {
-	public class MainActivity : Activity
+	public class MainActivity : ThreadedActivity
 	{
-
-		public override void Start()
-		{
-			Activity.setMainActivity(this);
-			base.Start();
+		private DiscordClient client;
+		public override void onStart() {
+			base.onStart();
 
 			client = new DiscordClient();
 			client.MessageReceived += client_MessageReceived;
 			client.Connect(Config.username, Config.password).Wait();
 			Console.WriteLine($"Connected! User: {client.CurrentUser.Name}");
 
-			registerCommand("pente", cmdStartPente);
-			registerCommand("test", cmdStartTest);
-			registerCommand("echo", cmdEcho);
-		}
-
-		private void cmdStartTest(Command obj)
-		{
-			Console.WriteLine("Test!!!");
-			addChild(new Activities.TestActivity());
+			CommandManager.addCommandHook("test", (cmd) => {
+				Console.WriteLine("{0}: Test: {1}", cmd.client.Name, string.Join(",", cmd.args));
+			});
 		}
 
 		private void client_MessageReceived(object sender, MessageEventArgs e)
@@ -42,31 +37,18 @@ namespace SadMachine
 
 			if (content[0] == '!')
 			{
-				handleCommand(e);
+				try {
+					string[] split = content.Replace("!", "").Split(' ');
+					string[] args = new string[split.Length - 1];
+					for (int i = 1; i < split.Length; i++)
+						args[i - 1] = split[i];
+
+					CommandManager.invokeCommand(e.User, split[0], args);
+				} catch(Exception ex) {
+					Console.WriteLine(ex.Message);
+					Console.WriteLine(ex.StackTrace);
+				}
 			}
-		}
-
-		private async void cmdEcho(Command obj)
-		{
-			await sendMessage(obj.info.Channel, obj.info.Message.Text.Remove(0, 1));
-		}
-
-		private async void cmdStartPente(Command obj)
-		{
-			int size = 0;
-			if (int.TryParse(obj.param[1], out size))
-			{
-				addChild(new Activities.PenteActivity(obj.info.User, size));
-				await sendMessage(obj.info.Channel, obj.info.User.Mention + " wants to start a game of pente!" + Environment.NewLine
-					+ "Type !joinpente to join the game" + Environment.NewLine
-					+ "Type !startpente to start the game" + Environment.NewLine
-					+ "Type !setpiece to change your player piece");
-			}
-		}
-
-		public override void Stop()
-		{
-			base.Stop();
 		}
 	}
 }

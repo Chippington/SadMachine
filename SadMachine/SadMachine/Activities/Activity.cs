@@ -7,12 +7,12 @@ using System.Linq;
 using System.Text;
 
 namespace SadMachine.Activities {
-	public class Activity : NetUtils.Net.NetBase {
+	public class Activity {
 		public class ScheduledEvent {
-			public Action<float> ev;
-			public float time;
+			public Action<double> ev;
+			public double time;
 			public bool repeat;
-			internal float next;
+			internal double next;
 		}
 
 		private List<ScheduledEvent> eventList;
@@ -86,7 +86,7 @@ namespace SadMachine.Activities {
 		/// <param name="ev"></param>
 		/// <param name="time"></param>
 		/// <param name="repeat"></param>
-		public ScheduledEvent addScheduledEvent(Action<float> ev, float time, bool repeat) {
+		public ScheduledEvent addScheduledEvent(Action<double> ev, double time, bool repeat) {
 			var ret = new ScheduledEvent() {
 				ev = ev,
 				time = time,
@@ -117,6 +117,22 @@ namespace SadMachine.Activities {
 		/// <param name="ev"></param>
 		public void removeScheduledEvent(ScheduledEvent ev) {
 			eventList.Remove(ev);
+		}
+
+		/// <summary>
+		/// Logs the string to the console
+		/// </summary>
+		/// <param name="str"></param>
+		public void log(string str) {
+			Console.WriteLine(str);
+		}
+		
+		/// <summary>
+		/// Returns the time in seconds since the application started.
+		/// </summary>
+		/// <returns></returns>
+		public double getTime() {
+			return ((double)Environment.TickCount) / 1000d;
 		}
 	}
 }

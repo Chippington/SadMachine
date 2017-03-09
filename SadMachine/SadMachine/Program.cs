@@ -15,15 +15,12 @@ namespace SadMachine
             if (Config.loadConfig() == false)
                 Config.inputConfig();
 
-			Thread t = new Thread(new ThreadStart(() =>
-			{
-				activity.Start();
-			}));
-			
-			t.Start();
+			activity.initialize();
 
-			while (true)
+			while (true) {
 				Thread.Sleep(10);
+				activity.update();
+			}
 		}
 	}
 }
