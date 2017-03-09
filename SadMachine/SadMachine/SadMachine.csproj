@@ -75,10 +75,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Activities\PenteActivity.cs" />
-    <Compile Include="Activities\TestActivity.cs" />
-    <Compile Include="Activity.cs" />
-    <Compile Include="Command.cs" />
+    <Compile Include="Activities\Activity.cs" />
+    <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Program.cs" />
@@ -86,7 +84,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
