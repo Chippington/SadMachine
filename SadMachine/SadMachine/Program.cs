@@ -2,27 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace SadMachine {
-	class Program {
-		private static bool exit = false;
+namespace SadMachine
+{
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			MainActivity activity = new MainActivity();
+            if (Config.loadConfig() == false)
+                Config.inputConfig();
 
-		static void Main(string[] args) {
-			var cfg = Config.loadConfig();
-			if (!cfg) Config.inputConfig();
+			Thread t = new Thread(new ThreadStart(() =>
+			{
+				activity.Start();
+			}));
+			
+			t.Start();
 
-			var mainActivity = new SadMachine.Activities.MainActivity();
-			mainActivity.initialize();
-
-			while(!exit) {
-				System.Threading.Thread.Sleep(1);
-				mainActivity.update();
-			}
-		}
-
-		public static void Exit() {
-			exit = true;
+			while (true)
+				Thread.Sleep(10);
 		}
 	}
 }
