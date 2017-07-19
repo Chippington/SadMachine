@@ -15,6 +15,7 @@ namespace SadMachine
             if (Config.loadConfig() == false)
                 Config.inputConfig();
 
+			var cl = MainClient.client;
 			activity.initialize();
 
 			while (true) {

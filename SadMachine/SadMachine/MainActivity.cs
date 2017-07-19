@@ -11,44 +11,52 @@ using System.Threading.Tasks;
 
 using SadMachine.Activities;
 using SadMachine.Commands;
+using Discord.WebSocket;
+using Discord.Net.Providers.WS4Net;
+using System.Diagnostics;
+using Discord.Audio;
+using VideoLibrary;
+using MediaToolkit.Model;
+using MediaToolkit;
 
 namespace SadMachine
 {
-	public class MainActivity : ThreadedActivity
+	public class MainActivity : Activity
 	{
-		private DiscordClient client;
-		public override void onStart() {
-			base.onStart();
+		public override void onInitialize() {
+			base.onInitialize();
 
-			client = new DiscordClient();
-			client.MessageReceived += client_MessageReceived;
-			client.Connect(Config.username, Config.password).Wait();
-			Console.WriteLine($"Connected! User: {client.CurrentUser.Name}");
+			MainClient.onMessageReceived = client_MessageReceived;
 
-			CommandManager.addCommandHook("test", (cmd) => {
-				Console.WriteLine("{0}: Test: {1}", cmd.messageInfo.User.Name, string.Join(",", cmd.args));
-			});
+			MusicPlayerActivity musicPlayer = new MusicPlayerActivity();
+			addActivity(musicPlayer);
 		}
 
-		private void client_MessageReceived(object sender, MessageEventArgs e)
-		{
-			Console.WriteLine(e.Channel.Name + ": " + e.User.Nickname + ": " + e.Message.Text);
-			string content = e.Message.Text;
+		private Task client_MessageReceived(SocketMessage arg) {
+			Console.WriteLine(arg.Channel.Name + ": " + arg.Author.Username + ": " + arg.Content);
+			string content = arg.Content;
 
-			if (content[0] == '!')
-			{
+			if (content[0] == '!') {
 				try {
 					string[] split = content.Replace("!", "").Split(' ');
 					string[] args = new string[split.Length - 1];
 					for (int i = 1; i < split.Length; i++)
 						args[i - 1] = split[i];
 
-					CommandManager.invokeCommand(e, split[0], args);
-				} catch(Exception ex) {
+					CommandManager.invokeCommand(arg, split[0], args);
+				} catch (Exception ex) {
 					Console.WriteLine(ex.Message);
 					Console.WriteLine(ex.StackTrace);
 				}
 			}
+
+			return Task.CompletedTask;
+		}
+
+		private Task Log(LogMessage msg) {
+			var m = msg;
+			Console.WriteLine(m.ToString());
+			return Task.CompletedTask;
 		}
 	}
 }

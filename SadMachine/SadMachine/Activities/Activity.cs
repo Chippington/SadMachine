@@ -8,6 +8,7 @@ using System.Text;
 
 namespace SadMachine.Activities {
 	public class Activity {
+		public bool disposed = false;
 		public class ScheduledEvent {
 			public Action<double> ev;
 			public double time;
@@ -30,6 +31,10 @@ namespace SadMachine.Activities {
 		/// Event driven method called when the activity has been initialized.
 		/// </summary>
 		public virtual void onInitialize() {
+		}
+
+		public virtual void onRemoved() {
+
 		}
 
 		/// <summary>
@@ -77,6 +82,8 @@ namespace SadMachine.Activities {
 		public void removeActivity(Activity activity) {
 			if (activities.Contains(activity))
 				activities.Remove(activity);
+
+			activity.disposed = true;
 			log("Removed activity: " + activity.GetType().Name);
 		}
 

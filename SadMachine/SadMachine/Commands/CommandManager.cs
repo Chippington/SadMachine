@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Discord;
+using Discord.WebSocket;
 
 namespace SadMachine.Commands {
 	public static class CommandManager {
@@ -23,14 +24,21 @@ namespace SadMachine.Commands {
 				callbackMap[command].Remove(callback);
 		}
 
-		public static void invokeCommand(MessageEventArgs mInfo, string cmdName, string[] args) {
+		public static void invokeCommand(SocketMessage mInfo, string cmdName, string[] args) {
 			if(callbackMap.ContainsKey(cmdName)) {
 				Command cmd = new Command();
 				cmd.messageInfo = mInfo;
 				cmd.args = args;
 
-				foreach (Action<Command> a in callbackMap[cmdName])
-					a?.Invoke(cmd);
+				foreach (Action<Command> a in callbackMap[cmdName]) {
+					try {
+						a?.Invoke(cmd);
+					} catch(Exception ex) {
+						Console.WriteLine("Exception in callback {0}", a.Method.Name);
+						Console.WriteLine(ex.Message);
+						Console.WriteLine(ex.StackTrace);
+					}
+				}
 			}
 		}
 	}

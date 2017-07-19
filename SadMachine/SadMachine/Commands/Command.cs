@@ -7,10 +7,11 @@ using System.Linq;
 using System.Text;
 using Discord.Net;
 using Discord;
+using Discord.WebSocket;
 
 namespace SadMachine.Commands {
 	public class Command {
-		public MessageEventArgs messageInfo;
+		public SocketMessage messageInfo;
 		public string[] args;
 	}
 }
